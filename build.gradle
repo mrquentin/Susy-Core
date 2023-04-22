@@ -1,149 +1,108 @@
 buildscript {
     repositories {
-        maven {
-            // url = 'https://maven.cleanroommc.com'
-            url = 'https://maven.minecraftforge.net'
-        }
-        maven {
-            url = 'https://repo.spongepowered.org/maven'
-        }
+        maven { url = 'https://repo.spongepowered.org/maven'}
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3.4'
-        if (project.use_mixins.toBoolean()) {
-            classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
-        }
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'eclipse'
 
-if (project.use_mixins.toBoolean()) {
-    apply plugin: 'org.spongepowered.mixin'
-}
+version = mod_version
+group = maven_group
+archivesBaseName = archives_base_name
 
-version = project.mod_version
-group = project.maven_group
-archivesBaseName = project.archives_base_name
-
-sourceCompatibility = targetCompatibility = '1.8'
-
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
-
-configurations {
-    embed
-    implementation.extendsFrom(embed)
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    version = '1.12.2-14.23.5.2847'
-    runDir = 'run'
-    mappings = 'stable_39'
-    def args = []
-    if (project.use_coremod.toBoolean()) {
-        args << '-Dfml.coreMods.load=' + coremod_plugin_class_name
+    mappings channel: 'snapshot', version: '20171003-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
+        }
+
+        server {
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            arg '-torg.spongepowered.asm.launch.MixinTweaker'
+        }
     }
-    if (project.use_mixins.toBoolean()) {
-        args << '-Dmixin.hotSwap=true'
-        args << '-Dmixin.checks.interfaces=true'
-        args << '-Dmixin.debug.export=true'
-    }
-    clientJvmArgs.addAll(args)
-    serverJvmArgs.addAll(args)
 }
 
 repositories {
-    maven {
-        url = 'https://maven.cleanroommc.com'
-    }
-    maven {
-        url = 'https://repo.spongepowered.org/maven'
-    }
-    maven {
-        url = "https://www.cursemaven.com"
-    }
+    maven { url = 'https://maven.cleanroommc.com' }
+    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = "https://www.cursemaven.com" }
 }
 
 dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2859'
     implementation 'org.jetbrains:annotations:20.1.0'
-    if (project.use_assetmover.toBoolean()) {
-        deobfCompile 'com.cleanroommc:assetmover:0.2'
-    }
-    if (project.use_mixins.toBoolean()) {
-        deobfCompile 'zone.rong:mixinbooter:5.0'
-    }
 
-    // format for dependencies: deobfCompile 'curse.maven:<project-slug>-<project-id>:<file-id>'
+    implementation fg.deobf('com.cleanroommc:assetmover:0.2')
+    implementation fg.deobf('zone.rong:mixinbooter:5.0')
 
-    // CCL 3.2.3.358
-    deobfCompile 'curse.maven:codechicken-lib-1-8-242818:2779848'
-    // GTCEu 2.6.0/2.6.1
-    //deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:4480237'
-    deobfCompile 'curse.maven:gregtech-ce-unofficial-557242:4483462'
-
-    // GCYM 1.2.0
-    //deobfCompile 'curse.maven:gregicality-multiblocks-564858:4422413'
-    deobfCompile 'curse.maven:gregicality-multiblocks-564858:4480254'
-
-    //GeckoLib
-    deobfCompile 'curse.maven:geckolib-388172:4020277'
-
-    // JEI 4.16.1.302
-    deobfCompile 'curse.maven:jei-238222:3043174'
-    // 1.4.28
-    deobfCompile 'curse.maven:the-one-probe-245211:2667280'
-
-    deobfCompile 'curse.maven:realistic-terrain-generation-unofficial-648514:4404814'
-
-    deobfCompile 'curse.maven:biomes-o-plenty-220318:2842510'
-
-    deobfCompile 'curse.maven:gregtech-food-option-477021:4496053'
-}
-
-sourceSets {
-    main {
-        ext.refMap = 'mixins.' + archives_base_name + '.refmap.json'
-    }
+    implementation fg.deobf('curse.maven:codechicken-lib-1-8-242818:2779848')
+    implementation fg.deobf('curse.maven:gregtech-ce-unofficial-557242:4483462')
+    implementation fg.deobf('curse.maven:gregicality-multiblocks-564858:4480254')
+    implementation fg.deobf('curse.maven:geckolib-388172:4020277')
+    implementation fg.deobf('curse.maven:jei-238222:3043174')
+    implementation fg.deobf('curse.maven:the-one-probe-245211:2667280')
+    implementation fg.deobf('curse.maven:realistic-terrain-generation-unofficial-648514:4404814')
+    implementation fg.deobf('curse.maven:biomes-o-plenty-220318:2842510')
+    implementation fg.deobf('curse.maven:gregtech-food-option-477021:4496053')
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
+    inputs.property 'mcversion', minecraft_version
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
         // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
+        expand 'version': project.version, 'mcversion': minecraft_version
     }
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 
-    if (project.use_access_transformer.toBoolean()) {
+    if (use_access_transformer.toBoolean()) {
         rename '(.+_at.cfg)', 'META-INF/$1' // Access Transformers
     }
 }
 
+// Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         def attribute_map = [:]
-        if (project.use_coremod.toBoolean()) {
-            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
-            if (project.include_mod.toBoolean()) {
+        if (use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = coremod_plugin_class_name
+            if (include_mod.toBoolean()) {
                 attribute_map['FMLCorePluginContainsFMLMod'] = true
                 attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == "build"
             }
         }
-        if (project.use_mixins.toBoolean()) {
+        if (use_mixins.toBoolean()) {
             attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
         }
-        if (project.use_access_transformer.toBoolean()) {
-            attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+        if (use_access_transformer.toBoolean()) {
+            attribute_map['FMLAT'] = archives_base_name + '_at.cfg'
         }
         attributes(attribute_map)
     }
 }
+
+//jar.finalizedBy('reobfJar')
+
