@@ -21,7 +21,8 @@ archivesBaseName = archives_base_name
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
+//    mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: 'stable', version: '39'
 
     runs {
         client {
@@ -52,15 +53,15 @@ dependencies {
     implementation fg.deobf('com.cleanroommc:assetmover:0.2')
     implementation fg.deobf('zone.rong:mixinbooter:5.0')
 
-    implementation fg.deobf('curse.maven:codechicken-lib-1-8-242818:2779848')
-    implementation fg.deobf('curse.maven:gregtech-ce-unofficial-557242:4483462')
-    implementation fg.deobf('curse.maven:gregicality-multiblocks-564858:4480254')
-    implementation fg.deobf('curse.maven:geckolib-388172:4020277')
-    implementation fg.deobf('curse.maven:jei-238222:3043174')
-    implementation fg.deobf('curse.maven:the-one-probe-245211:2667280')
-    implementation fg.deobf('curse.maven:realistic-terrain-generation-unofficial-648514:4404814')
-    implementation fg.deobf('curse.maven:biomes-o-plenty-220318:2842510')
-    implementation fg.deobf('curse.maven:gregtech-food-option-477021:4496053')
+    compile fg.deobf('curse.maven:codechicken-lib-1-8-242818:2779848')
+    compile fg.deobf('curse.maven:gregtech-ce-unofficial-557242:4483462')
+    compile fg.deobf('curse.maven:gregicality-multiblocks-564858:4480254')
+    compile fg.deobf('curse.maven:geckolib-388172:4020277')
+    compile fg.deobf('curse.maven:jei-238222:3043174')
+    compile fg.deobf('curse.maven:the-one-probe-245211:2667280')
+    compile fg.deobf('curse.maven:realistic-terrain-generation-unofficial-648514:4404814')
+    compile fg.deobf('curse.maven:biomes-o-plenty-220318:2842510')
+    compile fg.deobf('curse.maven:gregtech-food-option-477021:4496053')
 }
 
 processResources {
